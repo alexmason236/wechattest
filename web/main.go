@@ -51,6 +51,8 @@ func initRouter() {
 	helloHandler := func(w http.ResponseWriter, req *http.Request) {
 		service := getService()
 		resp := service.PreAuthCode()
+		token, _ := service.Token()
+		fmt.Println(token)
 		if !resp.Success() {
 			fmt.Println("获取授权链接失败:", resp.ErrMsg)
 			return
