@@ -19,9 +19,12 @@ func main() {
 		log.Fatal(http.ListenAndServe(":80", nil))
 	}()
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(5 * time.Second)
 	service := getService()
-	_ = service.ApiStartPushTicket()
+	err := service.ApiStartPushTicket()
+	if err != nil {
+		fmt.Printf("err:%v \n", err)
+	}
 	<-intChan
 }
 
@@ -68,6 +71,7 @@ func initRouter() {
 	}
 
 	ticketHandler := func(w http.ResponseWriter, req *http.Request) {
+		fmt.Println("ticketing")
 		wechatService := getService()
 		resp, err := wechatService.ServeHTTP(req)
 		if err != nil {
