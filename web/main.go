@@ -13,7 +13,7 @@ import (
 var srv *wechat3rd.Server
 
 func main() {
-
+	intChan := make(chan int)
 	go func() {
 		initRouter()
 		log.Fatal(http.ListenAndServe(":80", nil))
@@ -22,6 +22,7 @@ func main() {
 	time.Sleep(10 * time.Second)
 	service := getService()
 	_ = service.ApiStartPushTicket()
+	<-intChan
 }
 
 func getService() *wechat3rd.Server {
