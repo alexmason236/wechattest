@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"time"
 )
 
@@ -61,9 +60,9 @@ func initRouter() {
 		r := url.Values{}
 
 		// 必选参数
-		r.Add("component_appid", os.Getenv("WX_OPEN_APP_ID"))
+		r.Add("component_appid", "wx0775b18bb5d55acc")
 		r.Add("pre_auth_code", resp.PreAuthCode)
-		r.Add("redirect_uri", "你的回调url")
+		r.Add("redirect_uri", "https://42.192.194.241/authcallback")
 		r.Add("auth_type", string(wechat3rd.PREAUTH_AUTH_TYPE_MINIAPP))
 
 		// 网页方式授权：授权注册页面扫码授权
@@ -90,8 +89,14 @@ func initRouter() {
 		h.html(200, "success")
 	}
 
+	authCallbackHandler := func(w http.ResponseWriter, req *http.Request) {
+		fmt.Println("oauth call back")
+		fmt.Println(req.URL)
+	}
+
 	http.HandleFunc("/hello", helloHandler)
 	http.HandleFunc("/wxcallback", ticketHandler)
+	http.HandleFunc("/authcallback", authCallbackHandler)
 }
 
 type HtmlWriter struct {
