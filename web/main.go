@@ -66,5 +66,34 @@ func initRouter() {
 		authUrl += r.Encode()
 		println(authUrl)
 	}
-	http.HandleFunc("/wxcallback", helloHandler)
+
+	ticketHandler := func(w http.ResponseWriter, req *http.Request) {
+		wechatService := getService()
+		resp, err := wechatService.ServeHTTP(req)
+		if err != nil {
+			fmt.Println("微信第三方开放平台component_verify_ticket获取失败:", err.Error())
+			return
+		}
+		// 将ticket缓存,并在服务重启时取用.
+		err = wechatService.SetTicket(resp.ComponentVerifyTicket)
+
+		if err != nil {
+			fmt.Println("微信第三方开放平台component_verify_ticket设置失败:", err.Error())
+		}
+		h := &HtmlWriter{rw: w}
+		h.html(200, "success")
+	}
+
+	http.HandleFunc("/hello", helloHandler)
+	http.HandleFunc("/wxcallback", ticketHandler)
+}
+
+type HtmlWriter struct {
+	rw http.ResponseWriter
+}
+
+func (hw *HtmlWriter) html(code int, html string) {
+	hw.rw.Header().Set("Content-Type", "text/html")
+	hw.rw.WriteHeader(code)
+	hw.rw.Write([]byte(html))
 }
