@@ -69,6 +69,7 @@ func initRouter() {
 		authUrl := "https://mp.weixin.qq.com/cgi-bin/componentloginpage?"
 		authUrl += r.Encode()
 		println(authUrl)
+		fmt.Fprintf(w, "<div style='margin:0 auto;'><h2><a href='{%s}'>授权微信小程序</a></h2></div>", authUrl)
 	}
 
 	ticketHandler := func(w http.ResponseWriter, req *http.Request) {
